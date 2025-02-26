@@ -1,0 +1,9 @@
+https://github.com/brvphoenix/wrtbwmon/releases/download/v1.2.1-3/wrtbwmon_1.2.1-3_all.ipk
+https://github.com/brvphoenix/luci-app-wrtbwmon/releases/download/release-2.0.10/luci-app-wrtbwmon_2.0.10_all.ipk
+https://github.com/brvphoenix/luci-app-wrtbwmon/releases/download/release-2.0.10/luci-i18n-wrtbwmon-zh-cn_211213.07899_all.ipk
+https://op.dllkids.xyz/packages/x86_64/adguardhome_0.107.56-r303_x86_64.ipk
+https://op.dllkids.xyz/packages/x86_64/luci-app-adguardhome_26.048.31422~27758ea_all.ipk
+https://op.dllkids.xyz/packages/x86_64/luci-app-lucky_git-25.191.31136-d07a71c_all.ipk
+https://op.dllkids.xyz/packages/x86_64/lucky_2.15.7-r353_x86_64.ipk
+https://github.com/kenzok8/compile-package/releases/download/2025.02.26-10%2F45_x86_64/luci-app-nikki_1.19.5_all.ipk
+https://github.com/kenzok8/compile-package/releases/download/2025.02.26-10%2F45_x86_64/nikki_2025-02-21-5830afcb-7_x86_64.ipk
