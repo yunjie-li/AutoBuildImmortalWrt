@@ -5,6 +5,9 @@ echo "Starting 99-custom.sh at $(date)" >> $LOGFILE
 echo "编译固件大小为: $PROFILE MB"
 echo "Include Docker: $INCLUDE_DOCKER"
 
+echo "doanload external packages"
+cat /home/build/immortalwrt/files/external-package-urls.txt | xargs wget -P /home/build/immortalwrt/packages
+
 echo "Create pppoe-settings"
 mkdir -p  /home/build/immortalwrt/files/etc/config
 
