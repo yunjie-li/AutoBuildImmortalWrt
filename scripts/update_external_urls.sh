@@ -38,12 +38,6 @@ update_lucky_packages() {
   LUCKY_VERSION=$(echo "$LUCKY_RELEASE_INFO" | grep -o '"tag_name": "[^"]*' | cut -d'"' -f4)
   echo "lucky 最新版本: $LUCKY_VERSION"
   
-  # 输出所有下载链接，用于调试
-  echo "所有下载链接:"
-  ALL_URLS=$(echo "$LUCKY_RELEASE_INFO" | grep -o '"browser_download_url": "[^"]*' | cut -d'"' -f4)
-  echo "$ALL_URLS"
-  echo -e "\n"
-  
   # 初始化标志
   FOUND_LUCI_APP_LUCKY=false
   FOUND_LUCI_I18N_LUCKY=false
@@ -127,33 +121,7 @@ update_nikki_packages() {
   fi
   
   echo "找到 nikki 压缩包: $NIKKI_TARBALL_URL"
-  
-  # 创建临时目录
-  TEMP_DIR=$(mktemp -d)
-  
-  # 下载并解压
-  echo "下载 nikki 压缩包..."
-  wget -q "$NIKKI_TARBALL_URL" -O "$TEMP_DIR/nikki.tar.gz"
-  
-  echo "解压 nikki 压缩包..."
-  mkdir -p "$TEMP_DIR/nikki"
-  tar -xzf "$TEMP_DIR/nikki.tar.gz" -C "$TEMP_DIR/nikki"
-  
-  # 找到所有 ipk 文件并添加到临时文件
-  echo "处理 nikki ipk 文件..."
-  for ipk_file in $(find "$TEMP_DIR/nikki" -name "*.ipk"); do
-    # 获取文件名
-    filename=$(basename "$ipk_file")
-    # 创建一个临时 HTTP 服务器来提供文件
-    # 注意：这里我们使用 GitHub Actions 的 GITHUB_RUN_ID 和 GITHUB_RUN_NUMBER 来创建唯一的 URL
-    # 实际上，我们需要一个公共可访问的 URL 来存放这些文件
-    # 这里仅作为示例，实际使用时需要修改
-    echo "https://github.com/your-repo/releases/download/nikki-latest/$filename" >> "$TEMP_FILE"
-    echo "添加 nikki 包: $filename"
-  done
-  
-  # 清理临时目录
-  rm -rf "$TEMP_DIR"
+  echo "$NIKKI_TARBALL_URL" >> "$TEMP_FILE"
 }
 
 #################################################
@@ -161,7 +129,7 @@ update_nikki_packages() {
 #################################################
 
 # 检查是否安装了必要的工具
-for tool in curl grep sort tail wget; do
+for tool in curl grep sort tail; do
   if ! command -v $tool &> /dev/null; then
     echo "安装必要的工具: $tool"
     apt-get update && apt-get install -y $tool
@@ -171,8 +139,7 @@ done
 # 更新各类包
 update_lucky_packages
 update_adguardhome_packages
-# 注意：由于 nikki 包需要下载和解压，建议在 GitHub Actions 工作流中单独处理
-# update_nikki_packages
+update_nikki_packages
 
 # 替换原始文件
 mv "$TEMP_FILE" "$URL_FILE"
