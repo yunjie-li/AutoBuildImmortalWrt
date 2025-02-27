@@ -6,3 +6,5 @@ https://op.dllkids.xyz/packages/x86_64/luci-app-adguardhome_26.048.31422~27758ea
 https://github.com/gdy666/luci-app-lucky/releases/download/v2.15.7/luci-app-lucky_2.2.1-r1_all.ipk
 https://github.com/gdy666/luci-app-lucky/releases/download/v2.15.7/luci-i18n-lucky-zh-cn_25.051.12356.38229cf_all.ipk
 https://github.com/gdy666/luci-app-lucky/releases/download/v2.15.7/lucky_2.15.7_Openwrt_x86_64.ipk
+https://github.com/kenzok8/compile-package/releases/download/2025.02.27-10/48_x86_64/nikki_2025-02-21-5830afcb-7_x86_64.ipk
+https://github.com/kenzok8/compile-package/releases/download/2025.02.26-10/45_x86_64/luci-app-nikki_1.19.5_all.ipk
