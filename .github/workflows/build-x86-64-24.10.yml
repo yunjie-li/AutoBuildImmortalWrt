@@ -71,7 +71,7 @@ jobs:
           git push || echo "Failed to push changes"  
 
       - name: Set executable permissions
-        run: chmod +x ${{ github.workspace }}/x86-64/build.sh
+        run: chmod +x ${{ github.workspace }}/x86-64/24.10/build.sh
 
       - name: Validate PPPoE Inputs
         run: |
