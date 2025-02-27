@@ -69,10 +69,18 @@ EOF
 
 echo "cat pppoe-settings"
 cat /home/build/immortalwrt/files/etc/config/pppoe-settings
+
+# customize
+sed -i 's/192.168.1.1/192.168.2.253/g' /home/build/immortalwrt/package/base-files/files/bin/config_generate
+
+# 更改默认 Shell 为 zsh
+sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' /home/build/immortalwrt/package/base-files/files/etc/passwd
+
+# TTYD 免登录
+sed -i 's|/bin/login|/bin/login -f root|g' /home/build/immortalwrt/feeds/packages/utils/ttyd/files/ttyd.config
+
 # 输出调试信息
 echo "$(date '+%Y-%m-%d %H:%M:%S') - 开始编译..."
-
-
 
 # 定义所需安装的包列表 下列插件你都可以自行删减
 PACKAGES=""
