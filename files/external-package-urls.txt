@@ -6,3 +6,4 @@ https://github.com/gdy666/luci-app-lucky/releases/download/v2.15.7/luci-i18n-luc
 https://github.com/gdy666/luci-app-lucky/releases/download/v2.15.7/lucky_2.15.7_Openwrt_x86_64.ipk
 https://op.dllkids.xyz/packages/x86_64/adguardhome_0.107.56-r303_x86_64.ipk
 https://op.dllkids.xyz/packages/x86_64/luci-app-adguardhome_26.048.31422~27758ea_all.ipk
+https://github.com/nikkinikki-org/OpenWrt-nikki/releases/download/v1.19.5/nikki_x86_64-openwrt-24.10.tar.gz
