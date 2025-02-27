@@ -21,34 +21,34 @@ cp $ZSH/templates/zshrc.zsh-template $ROOT/.zshrc
 sed -i "s/ZSH_THEME=\".\+\"/ZSH_THEME=\"ys\"/" $ROOT/.zshrc
 sed -i "s/plugins=.\+/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/" $ROOT/.zshrc
 
-# Start Clash Core Download
-echo "Start Clash Core Download !"
-echo "Current Path: $PWD"
+# # Start Clash Core Download
+# echo "Start Clash Core Download !"
+# echo "Current Path: $PWD"
 
-mkdir -p /home/build/immortalwrt/files/etc/openclash/core
-cd /home/build/immortalwrt/files/etc/openclash/core || (echo "Clash core path does not exist! " && exit)
+# mkdir -p /home/build/immortalwrt/files/etc/openclash/core
+# cd /home/build/immortalwrt/files/etc/openclash/core || (echo "Clash core path does not exist! " && exit)
 
-# Clash Dev
-wget https://raw.githubusercontent.com/vernesong/OpenClash/core/master/dev/clash-linux-amd64.tar.gz
-tar -zxvf clash-linux-amd64.tar.gz
-rm -rf clash-linux-amd64.tar.gz
-mv clash clash_dev
+# # Clash Dev
+# wget https://raw.githubusercontent.com/vernesong/OpenClash/core/master/dev/clash-linux-amd64.tar.gz
+# tar -zxvf clash-linux-amd64.tar.gz
+# rm -rf clash-linux-amd64.tar.gz
+# mv clash clash_dev
 
-# Clash TUN
-VERSION=$(curl -sS https://raw.githubusercontent.com/vernesong/OpenClash/core/dev/core_version | awk 'NR==2')
-wget https://raw.githubusercontent.com/vernesong/OpenClash/core/master/premium/clash-linux-amd64-$VERSION.gz
-gzip -d clash-linux-amd64-$VERSION.gz
-rm -rf clash-linux-amd64-$VERSION.gz
-mv clash-linux-amd64-$VERSION clash_tun
+# # Clash TUN
+# VERSION=$(curl -sS https://raw.githubusercontent.com/vernesong/OpenClash/core/dev/core_version | awk 'NR==2')
+# wget https://raw.githubusercontent.com/vernesong/OpenClash/core/master/premium/clash-linux-amd64-$VERSION.gz
+# gzip -d clash-linux-amd64-$VERSION.gz
+# rm -rf clash-linux-amd64-$VERSION.gz
+# mv clash-linux-amd64-$VERSION clash_tun
 
-# Clash Meta
-wget https://raw.githubusercontent.com/vernesong/OpenClash/core/master/meta/clash-linux-amd64.tar.gz
-tar -zxvf clash-linux-amd64.tar.gz
-rm -rf clash-linux-amd64.tar.gz
-mv clash clash_meta
+# # Clash Meta
+# wget https://raw.githubusercontent.com/vernesong/OpenClash/core/master/meta/clash-linux-amd64.tar.gz
+# tar -zxvf clash-linux-amd64.tar.gz
+# rm -rf clash-linux-amd64.tar.gz
+# mv clash clash_meta
 
-# Use clash_dev as default core
-mv clash_dev clash
+# # Use clash_dev as default core
+# mv clash_dev clash
 
 
 
