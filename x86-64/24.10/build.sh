@@ -5,8 +5,21 @@ echo "Starting 99-custom.sh at $(date)" >> $LOGFILE
 echo "编译固件大小为: $PROFILE MB"
 echo "Include Docker: $INCLUDE_DOCKER"
 
-echo "doanload external packages"
-cat /home/build/immortalwrt/files/external-package-urls.txt | xargs wget -P /home/build/immortalwrt/packages
+echo "download external packages"
+# 创建 packages 目录（如果不存在）
+mkdir -p /home/build/immortalwrt/packages
+
+# 如果临时目录中有预下载的包，复制到 packages 目录
+if [ -d "/tmp/packages" ] && [ "$(ls -A /tmp/packages)" ]; then
+  echo "复制预下载的 nikki 包文件..."
+  cp /tmp/packages/* /home/build/immortalwrt/packages/
+fi
+
+# 下载 external-package-urls.txt 中的包
+if [ -f "/home/build/immortalwrt/files/external-package-urls.txt" ]; then
+  echo "下载外部包..."
+  cat /home/build/immortalwrt/files/external-package-urls.txt | xargs -I{} wget -P /home/build/immortalwrt/packages {}
+fi
 
 echo "Start oh-my-zsh Config !"
 echo "Current Path: $PWD"
