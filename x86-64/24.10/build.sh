@@ -8,9 +8,9 @@ echo "Include Docker: $INCLUDE_DOCKER"
 # 处理外部包
 echo "处理外部包..."
 mkdir -p /home/build/immortalwrt/packages
-if [ -f "/home/build/immortalwrt/files/scripts/handle_packages.sh" ]; then
-  chmod +x /home/build/immortalwrt/files/scripts/handle_packages.sh
-  /home/build/immortalwrt/files/scripts/handle_packages.sh
+if [ -f "/home/build/immortalwrt/scripts/handle_packages.sh" ]; then
+  chmod +x /home/build/immortalwrt/scripts/handle_packages.sh
+  /home/build/immortalwrt/scripts/handle_packages.sh
 fi
 
 echo "Start oh-my-zsh Config !"
