@@ -25,8 +25,8 @@ sed -i "s/plugins=.\+/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/
 echo "Start Clash Core Download !"
 echo "Current Path: $PWD"
 
-mkdir -p files/etc/openclash/core
-cd files/etc/openclash/core || (echo "Clash core path does not exist! " && exit)
+mkdir -p /home/build/immortalwrt/files/etc/openclash/core
+cd /home/build/immortalwrt/files/etc/openclash/core || (echo "Clash core path does not exist! " && exit)
 
 # Clash Dev
 wget https://raw.githubusercontent.com/vernesong/OpenClash/core/master/dev/clash-linux-amd64.tar.gz
