@@ -53,15 +53,15 @@ update_lucky_packages() {
   while read -r url; do
     if [[ "$url" == *"/luci-app-lucky_"*".ipk" ]] && ! $FOUND_LUCI_APP_LUCKY; then
       echo "找到 luci-app-lucky: $url"
-      echo "$url" >> "$TEMP_FILE"  # 只保留下载链接
+      echo "$url" >> "$TEMP_FILE"
       FOUND_LUCI_APP_LUCKY=true
     elif [[ "$url" == *"/luci-i18n-lucky-zh-cn_"*".ipk" ]] && ! $FOUND_LUCI_I18N_LUCKY; then
       echo "找到 luci-i18n-lucky-zh-cn: $url"
-      echo "$url" >> "$TEMP_FILE"  # 只保留下载链接
+      echo "$url" >> "$TEMP_FILE"
       FOUND_LUCI_I18N_LUCKY=true
     elif [[ "$url" == *"/lucky_"*"_Openwrt_x86_64.ipk" ]] && ! $FOUND_LUCKY; then
       echo "找到 lucky: $url"
-      echo "$url" >> "$TEMP_FILE"  # 只保留下载链接
+      echo "$url" >> "$TEMP_FILE"
       FOUND_LUCKY=true
     fi
   done <<< "$(echo "$LUCKY_RELEASE_INFO" | grep -o '"browser_download_url": "[^"]*' | cut -d'"' -f4)"
@@ -88,7 +88,7 @@ update_nikki_packages() {
   NIKKI_REPO="kenzok8/compile-package"
   
   # 获取所有 releases (按时间排序，最新的在前)
-  RELEASES_INFO=$(curl -s "https://api.github.com/repos/$NIKKI_REPO/releases?per_page=20")
+  RELEASES_INFO=$(curl -s "https://api.github.com/repos/$NIKKI_REPO/releases?per_page=100")
   
   # 获取 releases 数量
   RELEASES_COUNT=$(echo "$RELEASES_INFO" | jq '. | length')
@@ -98,10 +98,10 @@ update_nikki_packages() {
   FOUND_LUCI_APP_NIKKI=false
   FOUND_NIKKI=false
   
-  # 先查找 nikki 包
+  # 遍历所有 releases
   while read -r release; do
     # 如果已经找到了所有需要的包，跳出循环
-    if $FOUND_NIKKI; then
+    if $FOUND_LUCI_APP_NIKKI && $FOUND_NIKKI; then
       break
     fi
     
@@ -111,49 +111,31 @@ update_nikki_packages() {
     # 只处理包含 x86_64 的 tag
     if [[ "$TAG" == *"x86_64"* ]]; then
       echo "检查 tag: $TAG"
+      echo "Tag $TAG 的所有下载链接:"
+      echo "$(echo "$release" | jq -r '.assets[].browser_download_url')"
       
       # 提取该 tag 的所有下载链接
       while read -r url; do
+        # 查找 nikki 包
         if [[ "$url" == *"/nikki_"*"_x86_64.ipk" ]] && ! $FOUND_NIKKI; then
           echo "找到 nikki: $url"
-          echo "$url" >> "$TEMP_FILE"  # 只保留下载链接
+          echo "$url" >> "$TEMP_FILE"
           FOUND_NIKKI=true
-          break
+        fi
+        
+        # 查找 luci-app-nikki 包
+        if [[ "$url" == *"/luci-app-nikki_"*".ipk" ]] && ! $FOUND_LUCI_APP_NIKKI; then
+          echo "找到 luci-app-nikki: $url"
+          echo "$url" >> "$TEMP_FILE"
+          FOUND_LUCI_APP_NIKKI=true
         fi
       done <<< "$(echo "$release" | jq -r '.assets[].browser_download_url')"
     fi
   done <<< "$(echo "$RELEASES_INFO" | jq -c '.[]')"
   
-  # 重置 releases_info 并获取更多 releases 来查找 luci-app-nikki
-  if ! $FOUND_LUCI_APP_NIKKI; then
-    echo "正在查找 luci-app-nikki 包..."
-    # 获取更多 releases，因为 luci-app-nikki 可能在更早的 release 中
-    ALL_RELEASES_INFO=$(curl -s "https://api.github.com/repos/$NIKKI_REPO/releases?per_page=100")
-    
-    while read -r release; do
-      # 如果已经找到了包，跳出循环
-      if $FOUND_LUCI_APP_NIKKI; then
-        break
-      fi
-      
-      # 提取 tag 名称
-      TAG=$(echo "$release" | jq -r '.tag_name')
-      
-      # 提取该 tag 的所有下载链接
-      while read -r url; do
-        if [[ "$url" == *"/luci-app-nikki_"*".ipk" ]] && ! $FOUND_LUCI_APP_NIKKI; then
-          echo "找到 luci-app-nikki: $url"
-          echo "$url" >> "$TEMP_FILE"  # 只保留下载链接
-          FOUND_LUCI_APP_NIKKI=true
-          break
-        fi
-      done <<< "$(echo "$release" | jq -r '.assets[].browser_download_url')"
-    done <<< "$(echo "$ALL_RELEASES_INFO" | jq -c '.[]')"
-  fi
-  
   # 检查是否找到了所需的包
   if ! $FOUND_LUCI_APP_NIKKI; then
-    echo "警告: 未找到 luci-app-nikki 包"
+    echo "警告: 未找到 luci-app-nikki 包 (仅在 x86_64 tag 中查找)"
   fi
   
   if ! $FOUND_NIKKI; then
