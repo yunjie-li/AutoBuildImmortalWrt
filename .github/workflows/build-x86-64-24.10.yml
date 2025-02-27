@@ -51,7 +51,7 @@ jobs:
         run: |
           chmod +x ${{ github.workspace }}/scripts/download_external.sh
           # 下载到临时目录，不是 files 目录
-          ${{ github.workspace }}/scripts/download_nikki.sh /tmp/packages
+          ${{ github.workspace }}/scripts/download_external.sh /tmp/packages
 
       # 新增步骤：更新外部包链接
       - name: Update external package URLs
