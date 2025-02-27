@@ -34,11 +34,6 @@ update_lucky_packages() {
   LUCKY_REPO="gdy666/luci-app-lucky"
   LUCKY_RELEASE_INFO=$(curl -s "https://api.github.com/repos/$LUCKY_REPO/releases/latest")
   
-  # 调试: 输出API返回的原始数据
-  echo "API返回数据预览(前500字符):"
-  echo "$LUCKY_RELEASE_INFO" | head -c 500
-  echo -e "\n"
-  
   # 提取版本号
   LUCKY_VERSION=$(echo "$LUCKY_RELEASE_INFO" | grep -o '"tag_name": "[^"]*' | cut -d'"' -f4)
   echo "lucky 最新版本: $LUCKY_VERSION"
@@ -49,13 +44,13 @@ update_lucky_packages() {
   echo "$ALL_URLS"
   echo -e "\n"
   
-  # 解析所有资源并添加到临时文件
+  # 初始化标志
   FOUND_LUCI_APP_LUCKY=false
   FOUND_LUCI_I18N_LUCKY=false
   FOUND_LUCKY=false
   
-  echo "$LUCKY_RELEASE_INFO" | grep -o '"browser_download_url": "[^"]*' | cut -d'"' -f4 | while read -r url; do
-    # 使用精确的匹配模式
+  # 解析所有资源并添加到临时文件
+  while read -r url; do
     if [[ "$url" == *"/luci-app-lucky_"*".ipk" ]] && ! $FOUND_LUCI_APP_LUCKY; then
       echo "找到 luci-app-lucky: $url"
       echo "luci-app-lucky $url" >> "$TEMP_FILE"
@@ -69,7 +64,7 @@ update_lucky_packages() {
       echo "lucky $url" >> "$TEMP_FILE"
       FOUND_LUCKY=true
     fi
-  done
+  done <<< "$(echo "$LUCKY_RELEASE_INFO" | grep -o '"browser_download_url": "[^"]*' | cut -d'"' -f4)"
   
   # 检查是否找到了所需的包
   if ! $FOUND_LUCI_APP_LUCKY; then
@@ -93,12 +88,7 @@ update_nikki_packages() {
   NIKKI_REPO="kenzok8/compile-package"
   
   # 获取所有 releases (按时间排序，最新的在前)
-  RELEASES_INFO=$(curl -s "https://api.github.com/repos/$NIKKI_REPO/releases?per_page=10")
-  
-  # 调试: 输出API返回的原始数据
-  echo "API返回数据预览(前500字符):"
-  echo "$RELEASES_INFO" | head -c 500
-  echo -e "\n"
+  RELEASES_INFO=$(curl -s "https://api.github.com/repos/$NIKKI_REPO/releases?per_page=20")
   
   # 获取 releases 数量
   RELEASES_COUNT=$(echo "$RELEASES_INFO" | jq '. | length')
@@ -108,10 +98,10 @@ update_nikki_packages() {
   FOUND_LUCI_APP_NIKKI=false
   FOUND_NIKKI=false
   
-  # 从 JSON 数组中提取每个 release 的信息
-  echo "$RELEASES_INFO" | jq -c '.[]' | while read -r release; do
+  # 先查找 nikki 包
+  while read -r release; do
     # 如果已经找到了所有需要的包，跳出循环
-    if $FOUND_LUCI_APP_NIKKI && $FOUND_NIKKI; then
+    if $FOUND_NIKKI; then
       break
     fi
     
@@ -123,33 +113,43 @@ update_nikki_packages() {
       echo "检查 tag: $TAG"
       
       # 提取该 tag 的所有下载链接
-      ASSETS=$(echo "$release" | jq -r '.assets[].browser_download_url')
+      while read -r url; do
+        if [[ "$url" == *"/nikki_"*"_x86_64.ipk" ]] && ! $FOUND_NIKKI; then
+          echo "找到 nikki: $url"
+          echo "nikki $url" >> "$TEMP_FILE"
+          FOUND_NIKKI=true
+          break
+        fi
+      done <<< "$(echo "$release" | jq -r '.assets[].browser_download_url')"
+    fi
+  done <<< "$(echo "$RELEASES_INFO" | jq -c '.[]')"
+  
+  # 重置 releases_info 并获取更多 releases 来查找 luci-app-nikki
+  if ! $FOUND_LUCI_APP_NIKKI; then
+    echo "正在查找 luci-app-nikki 包..."
+    # 获取更多 releases，因为 luci-app-nikki 可能在更早的 release 中
+    ALL_RELEASES_INFO=$(curl -s "https://api.github.com/repos/$NIKKI_REPO/releases?per_page=100")
+    
+    while read -r release; do
+      # 如果已经找到了包，跳出循环
+      if $FOUND_LUCI_APP_NIKKI; then
+        break
+      fi
       
-      # 输出所有下载链接，用于调试
-      echo "Tag $TAG 的所有下载链接:"
-      echo "$ASSETS"
-      echo -e "\n"
+      # 提取 tag 名称
+      TAG=$(echo "$release" | jq -r '.tag_name')
       
-      # 检查是否包含我们需要的文件
-      for url in $ASSETS; do
-        # 使用精确的匹配模式
+      # 提取该 tag 的所有下载链接
+      while read -r url; do
         if [[ "$url" == *"/luci-app-nikki_"*".ipk" ]] && ! $FOUND_LUCI_APP_NIKKI; then
           echo "找到 luci-app-nikki: $url"
           echo "luci-app-nikki $url" >> "$TEMP_FILE"
           FOUND_LUCI_APP_NIKKI=true
-        elif [[ "$url" == *"/nikki_"*"_x86_64.ipk" ]] && ! $FOUND_NIKKI; then
-          echo "找到 nikki: $url"
-          echo "nikki $url" >> "$TEMP_FILE"
-          FOUND_NIKKI=true
-        fi
-        
-        # 如果已经找到了所有需要的包，跳出循环
-        if $FOUND_LUCI_APP_NIKKI && $FOUND_NIKKI; then
           break
         fi
-      done
-    fi
-  done
+      done <<< "$(echo "$release" | jq -r '.assets[].browser_download_url')"
+    done <<< "$(echo "$ALL_RELEASES_INFO" | jq -c '.[]')"
+  fi
   
   # 检查是否找到了所需的包
   if ! $FOUND_LUCI_APP_NIKKI; then
