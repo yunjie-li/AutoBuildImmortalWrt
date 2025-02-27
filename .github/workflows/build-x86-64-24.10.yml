@@ -58,7 +58,7 @@ jobs:
 
       - name: Prepare files
         run: |
-          chmod +x ${{ github.workspace }}/files/scripts/handle_packages.sh
+          chmod +x ${{ github.workspace }}/scripts/handle_packages.sh
       
       # 提交更新后的文件
       - name: Commit updated external URLs
