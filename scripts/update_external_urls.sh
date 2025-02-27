@@ -53,15 +53,15 @@ update_lucky_packages() {
   while read -r url; do
     if [[ "$url" == *"/luci-app-lucky_"*".ipk" ]] && ! $FOUND_LUCI_APP_LUCKY; then
       echo "找到 luci-app-lucky: $url"
-      echo "luci-app-lucky $url" >> "$TEMP_FILE"
+      echo "$url" >> "$TEMP_FILE"  # 只保留下载链接
       FOUND_LUCI_APP_LUCKY=true
     elif [[ "$url" == *"/luci-i18n-lucky-zh-cn_"*".ipk" ]] && ! $FOUND_LUCI_I18N_LUCKY; then
       echo "找到 luci-i18n-lucky-zh-cn: $url"
-      echo "luci-i18n-lucky-zh-cn $url" >> "$TEMP_FILE"
+      echo "$url" >> "$TEMP_FILE"  # 只保留下载链接
       FOUND_LUCI_I18N_LUCKY=true
     elif [[ "$url" == *"/lucky_"*"_Openwrt_x86_64.ipk" ]] && ! $FOUND_LUCKY; then
       echo "找到 lucky: $url"
-      echo "lucky $url" >> "$TEMP_FILE"
+      echo "$url" >> "$TEMP_FILE"  # 只保留下载链接
       FOUND_LUCKY=true
     fi
   done <<< "$(echo "$LUCKY_RELEASE_INFO" | grep -o '"browser_download_url": "[^"]*' | cut -d'"' -f4)"
@@ -116,7 +116,7 @@ update_nikki_packages() {
       while read -r url; do
         if [[ "$url" == *"/nikki_"*"_x86_64.ipk" ]] && ! $FOUND_NIKKI; then
           echo "找到 nikki: $url"
-          echo "nikki $url" >> "$TEMP_FILE"
+          echo "$url" >> "$TEMP_FILE"  # 只保留下载链接
           FOUND_NIKKI=true
           break
         fi
@@ -143,7 +143,7 @@ update_nikki_packages() {
       while read -r url; do
         if [[ "$url" == *"/luci-app-nikki_"*".ipk" ]] && ! $FOUND_LUCI_APP_NIKKI; then
           echo "找到 luci-app-nikki: $url"
-          echo "luci-app-nikki $url" >> "$TEMP_FILE"
+          echo "$url" >> "$TEMP_FILE"  # 只保留下载链接
           FOUND_LUCI_APP_NIKKI=true
           break
         fi
