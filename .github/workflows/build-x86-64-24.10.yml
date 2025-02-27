@@ -47,13 +47,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Download nikki packages
-        run: |
-          chmod +x ${{ github.workspace }}/scripts/download_external.sh
-          # 下载到临时目录，不是 files 目录
-          ${{ github.workspace }}/scripts/download_external.sh /tmp/packages
-
-      # 新增步骤：更新外部包链接
       - name: Update external package URLs
         if: inputs.update_external_urls == 'yes'
         run: |
@@ -63,6 +56,10 @@ jobs:
           chmod +x ${{ github.workspace }}/scripts/update_external_urls.sh
           ${{ github.workspace }}/scripts/update_external_urls.sh
 
+      - name: Prepare files
+        run: |
+          chmod +x ${{ github.workspace }}/files/scripts/handle_packages.sh
+      
       # 提交更新后的文件
       - name: Commit updated external URLs
         if: inputs.update_external_urls == 'yes'
