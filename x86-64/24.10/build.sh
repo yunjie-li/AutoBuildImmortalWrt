@@ -107,8 +107,8 @@ PACKAGES="$PACKAGES luci-app-openclash"
 #customize
 PACKAGES="$PACKAGES luci-i18n-upnp-zh-cn"
 PACKAGES="$PACKAGES luci-app-adguardhome"
-PACKAGES="$PACKAGES luci-i18n-nikki-zh-cn"
-PACKAGES="$PACKAGES luci-i18n-lucky-zh-cn"
+PACKAGES="$PACKAGES luci-app-nikki"
+PACKAGES="$PACKAGES luci-app-lucky"
 # zsh 终端
 PACKAGES="$PACKAGES zsh"
 # Vim 完整版，带语法高亮
