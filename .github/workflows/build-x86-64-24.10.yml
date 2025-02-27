@@ -7,6 +7,14 @@ on:
         description: '请输入要编译固件大小 单位(MB)'
         required: true
         default: '1024'
+      update_external_urls:
+        description: '是否更新软件包'
+        required: false
+        default: 'yes'
+        type: choice
+        options:
+          - 'yes'
+          - 'no'
       include_docker:
         description: |
           是否编译 Docker 插件
@@ -39,9 +47,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 新增步骤：更新外部包链接
+      - name: Update external package URLs
+        if: inputs.update_external_urls == 'yes'
+        run: |
+          # 执行更新脚本
+          chmod +x ${{ github.workspace }}/scripts/update_external_urls.sh
+          ${{ github.workspace }}/scripts/update_external_urls.sh
+
+      # 提交更新后的文件
+      - name: Commit updated external URLs
+        if: inputs.update_external_urls == 'yes'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add files/external-package-urls.txt
+          git commit -m "Update external package URLs" || echo "No changes to commit"
+          git push || echo "Failed to push changes"  
+
       - name: Set executable permissions
         run: chmod +x ${{ github.workspace }}/x86-64/build.sh
-
 
       - name: Validate PPPoE Inputs
         run: |
