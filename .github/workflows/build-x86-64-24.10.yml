@@ -51,6 +51,7 @@ jobs:
         if: inputs.update_external_urls == 'yes'
         run: |
           sudo apt-get update
+          sudo apt-get upgrade
           sudo apt-get install -y jq
           # 执行更新脚本
           chmod +x ${{ github.workspace }}/customize_scripts/update_external_urls.sh
