@@ -6,12 +6,12 @@ echo "编译固件大小为: $PROFILE MB"
 echo "Include Docker: $INCLUDE_DOCKER"
 
 # 处理外部包
-# echo "处理外部包..."
-# mkdir -p /home/build/immortalwrt/packages
-# if [ -f "/home/build/immortalwrt/customize_scripts/handle_packages.sh" ]; then
-#   chmod +x /home/build/immortalwrt/customize_scripts/handle_packages.sh
-#   /home/build/immortalwrt/customize_scripts/handle_packages.sh
-# fi
+echo "处理外部包..."
+mkdir -p /home/build/immortalwrt/packages
+if [ -f "/home/build/immortalwrt/customize_scripts/handle_packages.sh" ]; then
+  chmod +x /home/build/immortalwrt/customize_scripts/handle_packages.sh
+  /home/build/immortalwrt/customize_scripts/handle_packages.sh
+fi
 
 echo "Start oh-my-zsh Config !"
 echo "Current Path: $PWD"
