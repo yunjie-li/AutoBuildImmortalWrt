@@ -100,7 +100,7 @@ PACKAGES="$PACKAGES luci-app-openclash"
 # PACKAGES="$PACKAGES luci-i18n-samba4-zh-cn"
 #customize
 PACKAGES="$PACKAGES luci-i18n-upnp-zh-cn"
-PACKAGES="$PACKAGES luci-app-adguardhome"
+# PACKAGES="$PACKAGES luci-app-adguardhome"
 PACKAGES="$PACKAGES luci-app-nikki"
 PACKAGES="$PACKAGES luci-app-lucky"
 # zsh 终端
