@@ -7,11 +7,19 @@ on:
         description: '请输入要编译固件大小 单位(MB)'
         required: true
         default: '1024'
+      update_external_urls:
+        description: '是否更新软件包'
+        required: false
+        default: 'yes'
+        type: choice
+        options:
+          - 'yes'
+          - 'no'
       include_docker:
         description: |
           是否编译 Docker 插件
         required: true
-        default: 'yes'
+        default: 'no'
         type: choice
         options:
           - 'yes'
@@ -39,8 +47,32 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Update external package URLs
+        if: inputs.update_external_urls == 'yes'
+        run: |
+          sudo apt-get update
+          sudo apt-get upgrade
+          sudo apt-get install -y jq
+          # 执行更新脚本
+          chmod +x ${{ github.workspace }}/customize_scripts/update_external_urls.sh
+          ${{ github.workspace }}/customize_scripts/update_external_urls.sh
+          
+      - name: Prepare files
+        run: |
+          chmod +x ${{ github.workspace }}/customize_scripts/handle_packages.sh
+      
+      # 提交更新后的文件
+      - name: Commit updated external URLs
+        if: inputs.update_external_urls == 'yes'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add files/external-package-urls.txt
+          git commit -m "Update external package URLs" || echo "No changes to commit"
+          git push || echo "Failed to push changes"  
+
       - name: Set executable permissions
-        run: chmod +x ${{ github.workspace }}/x86-64/build.sh
+        run: chmod +x ${{ github.workspace }}/x86-64/23.05/build.sh
       
       - name: Validate PPPoE Inputs
         run: |
@@ -65,6 +97,7 @@ jobs:
               --user root \
               -v "${{ github.workspace }}/bin:/home/build/immortalwrt/bin" \
               -v "${{ github.workspace }}/files:/home/build/immortalwrt/files" \
+              -v "${{ github.workspace }}/customize_scripts:/home/build/immortalwrt/customize_scripts" \
               -v "${{ github.workspace }}/x86-64/imm.config:/home/build/immortalwrt/.config" \
               -v "${{ github.workspace }}/x86-64/build.sh:/home/build/immortalwrt/build.sh" \
               -e PROFILE=$profile \
