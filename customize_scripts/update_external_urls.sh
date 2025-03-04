@@ -60,17 +60,20 @@ update_lucky_packages() {
     fi
   done <<< "$(echo "$LUCKY_RELEASE_INFO" | grep -o '"browser_download_url": "[^"]*' | cut -d'"' -f4)"
   
-  # 检查是否找到了所需的包
+  # 检查是否找到了所需的包，如果没找到则保留原有链接
   if ! $FOUND_LUCI_APP_LUCKY; then
-    echo "警告: 未找到 luci-app-lucky 包"
+    echo "警告: 未找到 luci-app-lucky 包，保留原有链接"
+    grep "luci-app-lucky_" "$URL_FILE" >> "$TEMP_FILE" || echo "注意: 没有找到之前的 luci-app-lucky 链接"
   fi
   
   if ! $FOUND_LUCI_I18N_LUCKY; then
-    echo "警告: 未找到 luci-i18n-lucky-zh-cn 包"
+    echo "警告: 未找到 luci-i18n-lucky-zh-cn 包，保留原有链接"
+    grep "luci-i18n-lucky-zh-cn_" "$URL_FILE" >> "$TEMP_FILE" || echo "注意: 没有找到之前的 luci-i18n-lucky-zh-cn 链接"
   fi
   
   if ! $FOUND_LUCKY; then
-    echo "警告: 未找到 lucky 包"
+    echo "警告: 未找到 lucky 包，保留原有链接"
+    grep "/lucky_.*_Openwrt_x86_64\.ipk" "$URL_FILE" >> "$TEMP_FILE" || echo "注意: 没有找到之前的 lucky 链接"
   fi
 }
 
@@ -108,17 +111,20 @@ update_mosdns_packages() {
     fi
   done <<< "$(echo "$MOSDNS_RELEASE_INFO" | grep -o '"browser_download_url": "[^"]*' | cut -d'"' -f4)"
   
-  # 检查是否找到了所需的包
+  # 检查是否找到了所需的包，如果没找到则保留原有链接
   if ! $FOUND_LUCI_APP_MOSDNS; then
-    echo "警告: 未找到 luci-app-mosdns 包"
+    echo "警告: 未找到 luci-app-mosdns 包，保留原有链接"
+    grep "luci-app-mosdns_" "$URL_FILE" >> "$TEMP_FILE" || echo "注意: 没有找到之前的 luci-app-mosdns 链接"
   fi
   
   if ! $FOUND_LUCI_I18N_MOSDNS; then
-    echo "警告: 未找到 luci-i18n-mosdns-zh-cn 包"
+    echo "警告: 未找到 luci-i18n-mosdns-zh-cn 包，保留原有链接"
+    grep "luci-i18n-mosdns-zh-cn_" "$URL_FILE" >> "$TEMP_FILE" || echo "注意: 没有找到之前的 luci-i18n-mosdns-zh-cn 链接"
   fi
   
   if ! $FOUND_MOSDNS; then
-    echo "警告: 未找到 mosdns 包"
+    echo "警告: 未找到 mosdns 包，保留原有链接"
+    grep "/mosdns_.*_x86_64\.ipk" "$URL_FILE" >> "$TEMP_FILE" || echo "注意: 没有找到之前的 mosdns 链接"
   fi
 }
 
@@ -133,12 +139,12 @@ update_nikki_packages() {
   NIKKI_TARBALL_URL=$(echo "$NIKKI_RELEASE_INFO" | grep -o '"browser_download_url": "[^"]*nikki_x86_64-openwrt-23.05.tar.gz[^"]*' | cut -d'"' -f4)
   
   if [ -z "$NIKKI_TARBALL_URL" ]; then
-    echo "警告: 未找到 nikki_x86_64-openwrt-23.05.tar.gz 压缩包"
-    return 1
+    echo "警告: 未找到 nikki_x86_64-openwrt-23.05.tar.gz 压缩包，保留原有链接"
+    grep "nikki_x86_64-openwrt-23.05.tar.gz" "$URL_FILE" >> "$TEMP_FILE" || echo "注意: 没有找到之前的 nikki 链接"
+  else
+    echo "找到 nikki 压缩包: $NIKKI_TARBALL_URL"
+    echo "$NIKKI_TARBALL_URL" >> "$TEMP_FILE"
   fi
-  
-  echo "找到 nikki 压缩包: $NIKKI_TARBALL_URL"
-  echo "$NIKKI_TARBALL_URL" >> "$TEMP_FILE"
 }
 
 #################################################
@@ -154,9 +160,9 @@ for tool in curl grep sort tail; do
 done
 
 # 更新各类包
-update_lucky_packages
-update_mosdns_packages
-update_nikki_packages
+update_lucky_packages || echo "更新 lucky 包失败，但继续执行"
+update_mosdns_packages || echo "更新 mosdns 包失败，但继续执行"
+update_nikki_packages || echo "更新 nikki 包失败，但继续执行"
 
 # 替换原始文件
 mv "$TEMP_FILE" "$URL_FILE"
