@@ -3,6 +3,6 @@ https://github.com/gdy666/luci-app-lucky/releases/download/v2.15.7/luci-i18n-luc
 https://github.com/gdy666/luci-app-lucky/releases/download/v2.15.7/lucky_2.15.7_Openwrt_x86_64.ipk
 https://github.com/sbwml/luci-app-mosdns/releases/download/v5.3.3-3/luci-app-mosdns_1.6.8_all.ipk
 https://github.com/sbwml/luci-app-mosdns/releases/download/v5.3.3-3/luci-i18n-mosdns-zh-cn_git-24.246.09619-49e5a0d_all.ipk
-https://github.com/sbwml/luci-app-mosdns/releases/download/v5.3.3-3/v2dat_2022-12-15-47b8ee51-1_x86_64.ipk
 https://github.com/sbwml/luci-app-mosdns/releases/download/v5.3.3-3/mosdns_5.3.3-3_x86_64.ipk
+https://github.com/sbwml/luci-app-mosdns/releases/download/v5.3.3-3/v2dat_2022-12-15-47b8ee51-1_x86_64.ipk
 https://github.com/nikkinikki-org/OpenWrt-nikki/releases/download/v1.20.0/nikki_x86_64-openwrt-23.05.tar.gz
