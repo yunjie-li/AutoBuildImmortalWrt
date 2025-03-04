@@ -52,10 +52,10 @@ PACKAGES="$PACKAGES luci-i18n-argon-config-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-opkg-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-ttyd-zh-cn"
 PACKAGES="$PACKAGES luci-app-openclash"
-PACKAGES="$PACKAGES luci-app-nikki"
-PACKAGES="$PACKAGES luci-app-lucky"
+PACKAGES="$PACKAGES luci-i18n-nikki-zh-cn"
+PACKAGES="$PACKAGES luci-i18n-lucky-zh-cn"
 PACKAGES="$PACKAGES luci-app-netdata"
-PACKAGES="$PACKAGES luci-app-mosdns"
+PACKAGES="$PACKAGES luci-i18n-mosdns-zh-cn"
 # zsh 终端
 PACKAGES="$PACKAGES zsh"
 # Vim 完整版，带语法高亮
