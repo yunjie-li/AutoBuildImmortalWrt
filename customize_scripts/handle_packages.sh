@@ -32,7 +32,7 @@ process_urls() {
     echo "处理 URL: $url"
     
     # 如果是 nikki 压缩包
-    if [[ "$url" == *"nikki_x86_64-openwrt-24.10.tar.gz"* ]]; then
+    if [[ "$url" == *"nikki_x86_64-openwrt-23.05.tar.gz"* ]]; then
       process_nikki_tarball "$url"
     else
       # 直接下载 IPK 文件
