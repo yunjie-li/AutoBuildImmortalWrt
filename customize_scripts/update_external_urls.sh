@@ -19,7 +19,7 @@ fi
 TEMP_FILE=$(mktemp)
 
 # 保存需要排除的包名，用正则表达式格式
-EXCLUDE_PATTERN="(lucky|nikki|adguardhome|luci-app-adguardhome)"
+EXCLUDE_PATTERN="(lucky|nikki|mosdns|luci-app-mosdns)"
 
 # 复制不包含排除包名的内容到临时文件
 grep -v -E "$EXCLUDE_PATTERN" "$URL_FILE" > "$TEMP_FILE" || true
@@ -75,33 +75,50 @@ update_lucky_packages() {
 }
 
 #################################################
-# 函数: 更新 adguardhome 相关包链接
+# 函数: 更新 mosdns 相关包链接
 #################################################
-update_adguardhome_packages() {
-  echo "获取 adguardhome 最新版本信息..."
+update_mosdns_packages() {
+  echo "获取 luci-app-mosdns 最新版本信息..."
+  MOSDNS_REPO="sbwml/luci-app-mosdns"
+  MOSDNS_RELEASE_INFO=$(curl -s "https://api.github.com/repos/$MOSDNS_REPO/releases/latest")
   
-  # 基础 URL
-  BASE_URL="https://op.dllkids.xyz/packages/x86_64"
+  # 提取版本号
+  MOSDNS_VERSION=$(echo "$MOSDNS_RELEASE_INFO" | grep -o '"tag_name": "[^"]*' | cut -d'"' -f4)
+  echo "mosdns 最新版本: $MOSDNS_VERSION"
   
-  # 获取目录列表
-  DIR_LISTING=$(curl -s "$BASE_URL/")
+  # 初始化标志
+  FOUND_LUCI_APP_MOSDNS=false
+  FOUND_LUCI_I18N_MOSDNS=false
+  FOUND_MOSDNS=false
   
-  # 查找最新的 adguardhome 和 luci-app-adguardhome 包
-  ADGUARDHOME_IPK=$(echo "$DIR_LISTING" | grep -o 'adguardhome_[^"]*_x86_64\.ipk' | sort -V | tail -n 1)
-  LUCI_ADGUARDHOME_IPK=$(echo "$DIR_LISTING" | grep -o 'luci-app-adguardhome_[^"]*\.ipk' | sort -V | tail -n 1)
+  # 解析所有资源并添加到临时文件
+  while read -r url; do
+    if [[ "$url" == *"/luci-app-mosdns_"*".ipk" ]] && ! $FOUND_LUCI_APP_MOSDNS; then
+      echo "找到 luci-app-mosdns: $url"
+      echo "$url" >> "$TEMP_FILE"
+      FOUND_LUCI_APP_MOSDNS=true
+    elif [[ "$url" == *"/luci-i18n-lucky-zh-cn_"*".ipk" ]] && ! $FOUND_LUCI_I18N_MOSDNS; then
+      echo "找到 luci-i18n-mosdns-zh-cn: $url"
+      echo "$url" >> "$TEMP_FILE"
+      FOUND_LUCI_I18N_MOSDNS=true
+    elif [[ "$url" == *"/mosdns_"*"_x86_64.ipk" ]] && ! $FOUND_MOSDNS; then
+      echo "找到 mosdns: $url"
+      echo "$url" >> "$TEMP_FILE"
+      FOUND_MOSDNS=true
+    fi
+  done <<< "$(echo "$MOSDNS_RELEASE_INFO" | grep -o '"browser_download_url": "[^"]*' | cut -d'"' -f4)"
   
-  if [ -z "$ADGUARDHOME_IPK" ]; then
-    echo "警告: 未找到 adguardhome 包"
-  else
-    echo "找到 adguardhome 包: $ADGUARDHOME_IPK"
-    echo "$BASE_URL/$ADGUARDHOME_IPK" >> "$TEMP_FILE"
+  # 检查是否找到了所需的包
+  if ! $FOUND_LUCI_APP_MOSDNS; then
+    echo "警告: 未找到 luci-app-mosdns 包"
   fi
   
-  if [ -z "$LUCI_ADGUARDHOME_IPK" ]; then
-    echo "警告: 未找到 luci-app-adguardhome 包"
-  else
-    echo "找到 luci-app-adguardhome 包: $LUCI_ADGUARDHOME_IPK"
-    echo "$BASE_URL/$LUCI_ADGUARDHOME_IPK" >> "$TEMP_FILE"
+  if ! $FOUND_LUCI_I18N_MOSDNS; then
+    echo "警告: 未找到 luci-i18n-mosdns-zh-cn 包"
+  fi
+  
+  if ! $FOUND_MOSDNS; then
+    echo "警告: 未找到 mosdns 包"
   fi
 }
 
@@ -138,7 +155,7 @@ done
 
 # 更新各类包
 update_lucky_packages
-update_adguardhome_packages
+update_mosdns_packages
 update_nikki_packages
 
 # 替换原始文件
