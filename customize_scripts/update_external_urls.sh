@@ -97,7 +97,7 @@ update_mosdns_packages() {
       echo "找到 luci-app-mosdns: $url"
       echo "$url" >> "$TEMP_FILE"
       FOUND_LUCI_APP_MOSDNS=true
-    elif [[ "$url" == *"/luci-i18n-lucky-zh-cn_"*".ipk" ]] && ! $FOUND_LUCI_I18N_MOSDNS; then
+    elif [[ "$url" == *"/luci-i18n-mosdns-zh-cn_"*".ipk" ]] && ! $FOUND_LUCI_I18N_MOSDNS; then
       echo "找到 luci-i18n-mosdns-zh-cn: $url"
       echo "$url" >> "$TEMP_FILE"
       FOUND_LUCI_I18N_MOSDNS=true
@@ -130,10 +130,10 @@ update_nikki_packages() {
   
   NIKKI_REPO="nikkinikki-org/OpenWrt-nikki"
   NIKKI_RELEASE_INFO=$(curl -s "https://api.github.com/repos/$NIKKI_REPO/releases/latest")
-  NIKKI_TARBALL_URL=$(echo "$NIKKI_RELEASE_INFO" | grep -o '"browser_download_url": "[^"]*nikki_x86_64-openwrt-24.10.tar.gz[^"]*' | cut -d'"' -f4)
+  NIKKI_TARBALL_URL=$(echo "$NIKKI_RELEASE_INFO" | grep -o '"browser_download_url": "[^"]*nikki_x86_64-openwrt-23.05.tar.gz[^"]*' | cut -d'"' -f4)
   
   if [ -z "$NIKKI_TARBALL_URL" ]; then
-    echo "警告: 未找到 nikki_x86_64-openwrt-24.10.tar.gz 压缩包"
+    echo "警告: 未找到 nikki_x86_64-openwrt-23.05.tar.gz 压缩包"
     return 1
   fi
   
