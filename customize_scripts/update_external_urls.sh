@@ -93,6 +93,7 @@ update_mosdns_packages() {
   FOUND_LUCI_APP_MOSDNS=false
   FOUND_LUCI_I18N_MOSDNS=false
   FOUND_MOSDNS=false
+  FOUND_V2DAT=false
   
   # 解析所有资源并添加到临时文件
   while read -r url; do
@@ -108,6 +109,10 @@ update_mosdns_packages() {
       echo "找到 mosdns: $url"
       echo "$url" >> "$TEMP_FILE"
       FOUND_MOSDNS=true
+    elif [[ "$url" == *"/v2dat_"*"_x86_64.ipk" ]] && ! $FOUND_V2DAT; then
+      echo "找到 v2dat: $url"
+      echo "$url" >> "$TEMP_FILE"
+      FOUND_V2DAT=true
     fi
   done <<< "$(echo "$MOSDNS_RELEASE_INFO" | grep -o '"browser_download_url": "[^"]*' | cut -d'"' -f4)"
   
@@ -125,6 +130,11 @@ update_mosdns_packages() {
   if ! $FOUND_MOSDNS; then
     echo "警告: 未找到 mosdns 包，保留原有链接"
     grep "/mosdns_.*_x86_64\.ipk" "$URL_FILE" >> "$TEMP_FILE" || echo "注意: 没有找到之前的 mosdns 链接"
+  fi
+  
+  if ! $FOUND_V2DAT; then
+    echo "警告: 未找到 v2dat 包，保留原有链接"
+    grep "/v2dat_" "$URL_FILE" >> "$TEMP_FILE" || echo "注意: 没有找到之前的 v2dat 链接"
   fi
 }
 
